@@ -33,6 +33,15 @@ def plot_polyn(polyn, D):
 	plt.plot(t, y, 'o', xx, polyn(xx),'-r')
 	plt.legend(['Data points', str(D)+'th Degree Polynomial'])
 	plt.show()
+	
+# plot MSE vs degree
+def plot_MSE(D_vals, MSE_vals):
+	# visualize degree vs. MSE 
+	plt.plot(D_vals, MSE_vals, 'o')
+	plt.title('Plot of the the mean-squared error vs. degree of polynomial')
+	plt.xlabel('D values')
+	plt.ylabel('Mean-squared error: R(D)')
+	plt.show()
 
 # compute mean squared error for estimated polynomial of degree D
 def MSE(t, y, polyn, D):
@@ -45,10 +54,15 @@ def MSE(t, y, polyn, D):
 
 if __name__ == "__main__":
 	t = np.loadtxt('data_problem2.1\\t.dat')
-	y = np.loadtxt('data_problem2.1\\y.dat')
-	n = len(y)
+	y_orig = np.loadtxt('data_problem2.1\\y.dat')
+	y_fresh = np.loadtxt('data_problem2.1\\yfresh.dat')
+
+	# choose a y data source
+	y = y_fresh
 	
+	n = len(y)
 	i = 0
+	
 	MSE_vals = np.zeros(n-1)
 	D_vals = np.zeros(n-1)
 	# fit the data with a D degree polynomial
@@ -66,9 +80,4 @@ if __name__ == "__main__":
 		D_vals[i] = D
 		i += 1
 	
-	print D_vals
-	# visualize degree vs. MSE 
-	plt.plot(D_vals, MSE_vals, 'o')
-	plt.xlabel('D values from {1,2,...n-1}')
-	plt.ylabel('Mean-squared error: R(D)')
-	plt.show()
+	plot_MSE(D_vals, MSE_vals);
