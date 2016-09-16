@@ -7,6 +7,7 @@
 \usepackage{subcaption}
 \usepackage[colorlinks]{hyperref}
 \usepackage{changepage}
+\def\infinity{\rotatebox{90}{8}}
  
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\R}{\mathbb{R}}
@@ -226,10 +227,10 @@ Substituting this back into our equation, we get:
 
 (a) By definition, we have likelihood of $\eta$ as:
 
-\[l(\eta; y_1,...y_n) = log(p(y_1,...,y_n|\eta)) = log(h(y_1,...y_n) + \eta^T(\sum^{n}_{i=1}y_i-nA(\eta))\]
+\[l(\eta; y_1,...y_n) = log(p(y_1,...,y_n|\eta)) = log(h(y_1,...y_n)) + \eta^T\sum^{n}_{i=1}y_i-nA(\eta)\]
 
 \begin{adjustwidth}{2.5em}{0pt}
-We differentiate and solve for $\hat{\eta}$ to get the MLE (assuming the inverse function exists under suitable regularity conditions):
+We differentiate and solve for $\hat{\eta}$ (assuming the inverse function exists under suitable regularity conditions):
 \end{adjustwidth}
 
 \[\frac{\partial}{\partial\eta}l(\eta; y_1,...y_n) = \sum^{n}_{i=1}y_i-n\frac{\partial}{\partial\eta}A(\eta)\]
@@ -238,7 +239,7 @@ We differentiate and solve for $\hat{\eta}$ to get the MLE (assuming the inverse
 (b) Closed-form estimates for MLE in Poisson, Bernoulli, Gaussian models:
 \\
 
-\bf{Poisson}
+Poisson
 \[\frac{\partial}{\partial\eta}A(\eta) = e^{\eta} = \frac{\sum^{n}_{i=1}y_i}{n}\]
 \[\hat{\eta} = log(\frac{\sum^{n}_{i=1}y_i}{n}) \]
 
@@ -250,7 +251,21 @@ Gaussian
 \[\frac{\partial}{\partial\eta}A(\eta) = \eta = \frac{\sum^{n}_{i=1}y_i}{n} \]
 \[\hat{\eta} = \frac{\sum^{n}_{i=1}y_i}{n}\]
 
-{\color{red} (c) (d)}
+(c)
+
+We know that $E(\bar{y}) = A'(\eta^{*})$ and by definition of MLE, we have:
+\[max_{\eta}\left\{{\eta\sum^{n}_{i=1}{y_i}-nA(\eta)}\right\} = max_{\eta}\left\{{\eta\bar{y}-A(\eta)}\right\} = min_{\eta}\left\{{-\eta\bar{y}+A(\eta)}\right\}\]
+
+Thus, we know that as $n \rightarrow \infinity$, then $\bar{y} \rightarrow A'(\eta^{*})$. Additionally, we can add or subtract any terms to this equation that do not depend on $\eta$, since they are just constants. We can substitute this into the above equation to get:
+
+\[\hat{\eta} = min_{\eta}\left\{{-\eta A'(\eta^{*})+A(\eta)}\right\} = min_{\eta}\left\{{-\eta A'(\eta^{*})+A(\eta) + \eta^{*}A'(\eta^{*}) - A(\eta^{*})}\right\}\]
+
+After some rearranging of terms, we get the final equation:
+
+\[\hat{\eta}= min_{\eta}\left\{ A(\eta) - A(\eta^{*}) - A'(\eta^{*})(\eta - \eta^{*})\right\} \]
+
+{\color{red}(d) Assume A is strictly convex.} 
+
 \end{problem}
 
 

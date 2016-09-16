@@ -1,5 +1,5 @@
 """
-Implementation of gradient descent.
+Implementation of stochastic gradient descent.
 """
 import numpy as np
 from numpy import *
@@ -18,14 +18,13 @@ def stoch_gd(X, y, numIter, stepSize, epsilon):
     # begin iterations
     for i in range(numIter):
         I = np.random.randint(0,m)
-        XIt = np.transpose(X[I])
 
+        extheta = np.exp((theta.T)*X[I])
         # compute the gradient at the current location
-        g = log(np.exp(-y[I]*((theta.T)*X[I])))
-        # g = -y[I]*XIt + XIt*(exp(XIt*theta)/(1+exp(XIt*theta)))
+        g = -y[I]*X[I] + X[I]*extheta/(1+extheta)
 
         # step in the direction of the gradient
-        theta2 = theta - stepSize/(i+1)*g
+        theta2 = theta - (stepSize/(i+1))*g
 
         if(np.dot(theta2-theta, theta2-theta) < epsilon):
             return theta
@@ -37,32 +36,33 @@ def stoch_gd(X, y, numIter, stepSize, epsilon):
 
 
 if __name__ == '__main__':
-    X = np.loadtxt('data_problem2.4/Xone.dat')
-    y = np.loadtxt('data_problem2.4/yone.dat')
+    Xone = np.loadtxt('data_problem2.4/Xone.dat')
+    yone = np.loadtxt('data_problem2.4/yone.dat')
 
-    (m,n) = np.shape(X)
+    Xtwo = np.loadtxt('data_problem2.4/Xtwo.dat')
+    ytwo = np.loadtxt('data_problem2.4/ytwo.dat')
+
+    (m,n) = np.shape(Xone)
     # take number of iterations to be number of examples
     numIter = m
     epsilon = 0.0000000000001
-    i = 1
-    j = 1
-    result = np.empty([m, 1])
+    stepSize = 0.01
 
-    #while i > 0.0000001:
-    stepSize = i/100
-    res = stoch_gd(X, y, numIter, stepSize, epsilon)
-    thetaX = np.transpose(res)*X
-    print thetaX.T*y
-    #result[j] = np.exp(thetaX.T*y)/(1+np.exp(thetaX));
-    #j += 1
-    #i /= 10.0
+    # data set #1
+    theta_hat1 = stoch_gd(Xone, yone, numIter, stepSize, epsilon)
+    e_yxtheta1 = np.exp(yone*np.dot(Xone,theta_hat1))
+    p_one = e_yxtheta1/(1+e_yxtheta1)
 
-    plt.plot(np.transpose(thetaX)*y)
-    #plt.axis([0, m, 0, 1.5])
+    # data set #2
+    theta_hat2 = stoch_gd(Xtwo, ytwo, numIter, stepSize, epsilon)
+    e_yxtheta2 = np.exp(ytwo*np.dot(Xtwo,theta_hat2))
+    p_two = e_yxtheta2/(1+e_yxtheta2)
+
+    bins = np.linspace(0, 1, 40)
+
+    plt.title("Histogram of probabilities based on theta_hat")
+    plt.xlabel("Probability: P(y_i | x_i, theta_hat)")
+    plt.ylabel("Number of samples with given probability")
+    #plt.hist(p_one, bins)
+    plt.hist(p_two, bins, facecolor='green')
     plt.show()
-
-    # verify what alpha it converges for
-    #XtX = np.dot(np.transpose(X),X)
-    #n = y.shape[0]
-    #lam = np.linalg.eig(XtX)[0][0]
-    #print 2*n/lam
