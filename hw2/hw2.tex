@@ -124,7 +124,7 @@ Using ordinary least-squares, we solve for $\alpha$ = $(X^{T}X)^{-1}X^{T}y$.}
 \begin{problem}{2.2}
 \text{ }\\
 
-{\color{red}(a) Prove that A is a convex function. --check that final claim about pos.def always holds!}
+(a) Prove that A is a convex function.
 \begin{proof}
 By definition, 
 \[ A(\eta) = log(\int_\gamma h(y)e^{\eta y}\,dy )~~,~~p_{\eta}(y) = h(y)e^{\eta y-A(\eta)} \]
@@ -271,7 +271,23 @@ Poisson
 Logistic
 \[A(t) = log(1+e^{t}) \implies \tilde{\theta}^{t+1} = \hat{\theta}^{t} - \gamma^{t} x^{T}_{I}(\frac{e^{x^{T}_{I}\theta^{t}}}{1+e^{x^{T}_{I}\theta^{t}}})\]
 
-{\color{red}(c) (d) (e) (f)}
+(c) Figure \ref{fig:4c} shows a histogram plot of the probabilities $P[y_i | x_i;\hat{\theta}]$  based on fitted vector $\hat{\theta}$ and files Xone.dat and yone.dat.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.5]{figs/4c.png}
+  \caption{Histogram of probabilities using Xone.dat and yone.dat}
+  \label{fig:4c}
+\end{figure}
+
+(d) Figure \ref{fig:4d} shows a histogram plot of the probabilities $P[y_i | x_i;\hat{\theta}]$  based on fitted vector $\hat{\theta}$ and files Xtwo.dat and ytwo.dat. {\color{red} The differences in Figure \ref{fig:4c} and \ref{fig:4d} are [~~~~~~~~~] and suggest about the accuracy of the fits.}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.5]{figs/4d.png}
+  \caption{Histogram of probabilities using Xtwo.dat and ytwo.dat}
+  \label{fig:4d}
+\end{figure}
+
+{\color{red}(e) (f)}
 
 \end{problem}
 
