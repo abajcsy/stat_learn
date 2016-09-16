@@ -5,21 +5,21 @@ import numpy as np
 from numpy import *
 import matplotlib.pyplot as plt
 
-def gd(X, y, numIter, stepSize, epsilon):
+
+def stoch_gd(X, y, numIter, stepSize, epsilon):
     (m,n) = np.shape(X)
     theta = np.random.rand(n)
-    Xtrans = np.transpose(X)
 
     # begin iterations
-    for i in range(numIter):
-        pred = np.dot(X,theta)
-        error = pred - y
+    for t in range(numIter):
+        I = np.random.randint(0,m)
+        XIt = np.transpose(X[I])
 
         # compute the gradient at the current location
-        g = np.dot(Xtrans,error)/y.shape[0]
+        g = -y[I]*XIt + XIt*(exp(XIt*theta)/(1+exp(XIt*theta)))
 
         # step in the direction of the gradient
-        theta2 = theta - stepSize*g
+        theta2 = theta - stepSize/(t+1)*g
 
         if(np.dot(theta2-theta, theta2-theta) < epsilon):
             return 1
@@ -31,30 +31,31 @@ def gd(X, y, numIter, stepSize, epsilon):
 
 
 if __name__ == '__main__':
-    X = np.loadtxt('Xmatrix.dat')
-    y = np.loadtxt('yvector.dat')
+    X = np.loadtxt('data_problem2.4/Xone.dat')
+    y = np.loadtxt('data_problem2.4/yone.dat')
 
-    numIter = 100000
+    (m,n) = np.shape(X)
+    # take number of iterations to be number of examples
+    numIter = m
     epsilon = 0.0000000000001
     i = 1
     j = 1
-    result = np.empty([1000, 1])
+    result = np.empty([m, 1])
 
-    while i < 60:
-        stepSize = i/100.0
-        res = gd(X, y, numIter, stepSize, epsilon)
-        print stepSize
+    while i > 0.0000001:
+        stepSize = i/10
+        res = stoch_gd(X, y, numIter, stepSize, epsilon)
         print res
         result[j] = res;
         j += 1
-        i += 0.1
+        i /= 10.0
 
     plt.plot(result)
-    plt.axis([0, 110, 0, 1.5])
+    plt.axis([0, m, 0, 1.5])
     plt.show()
 
     # verify what alpha it converges for
-    XtX = np.dot(np.transpose(X),X)
-    n = y.shape[0]
-    lam = np.linalg.eig(XtX)[0][0]
-    print 2*n/lam
+    #XtX = np.dot(np.transpose(X),X)
+    #n = y.shape[0]
+    #lam = np.linalg.eig(XtX)[0][0]
+    #print 2*n/lam

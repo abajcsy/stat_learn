@@ -124,7 +124,7 @@ Using ordinary least-squares, we solve for $\alpha$ = $(X^{T}X)^{-1}X^{T}y$.}
 \begin{problem}{2.2}
 \text{ }\\
 
-(a) Prove that A is a convex function.
+{\color{red}(a) Prove that A is a convex function. --check that final claim about pos.def always holds!}
 \begin{proof}
 By definition, 
 \[ A(\eta) = log(\int_\gamma h(y)e^{\eta y}\,dy )~~,~~p_{\eta}(y) = h(y)e^{\eta y-A(\eta)} \]
@@ -221,22 +221,57 @@ Substituting this back into our equation, we get:
 
 \end{problem}
 
-
 \begin{problem}{2.3}
 \text{ }\\
 
-(a) {\color{red} Gice simple expression for MLE that involves inverse function of A' and sample mean}
+(a) By definition, we have likelihood of $\eta$ as:
 
-(b) {\color{red} Use (a) to compute closed-form estimates for MLE in {Gauss, Poisson, Bernoulli}}
+\[l(\eta; y_1,...y_n) = log(p(y_1,...,y_n|\eta)) = log(h(y_1,...y_n) + \eta^T(\sum^{n}_{i=1}y_i-nA(\eta))\]
 
-(c) {\color{red} Show MLE given by}
+\begin{adjustwidth}{2.5em}{0pt}
+We differentiate and solve for $\hat{\eta}$ to get the MLE (assuming the inverse function exists under suitable regularity conditions):
+\end{adjustwidth}
 
-(d) {\color{red} Prove infinite data limit from (c)}
+\[\frac{\partial}{\partial\eta}l(\eta; y_1,...y_n) = \sum^{n}_{i=1}y_i-n\frac{\partial}{\partial\eta}A(\eta)\]
+\[\frac{\partial}{\partial\eta}A(\eta) = \frac{\sum^{n}_{i=1}y_i}{n} \implies \hat{\eta} = (A'^{-1})(\frac{\sum^{n}_{i=1}y_i}{n})\]
+
+(b) Closed-form estimates for MLE in Poisson, Bernoulli, Gaussian models:
+\\
+
+\bf{Poisson}
+\[\frac{\partial}{\partial\eta}A(\eta) = e^{\eta} = \frac{\sum^{n}_{i=1}y_i}{n}\]
+\[\hat{\eta} = log(\frac{\sum^{n}_{i=1}y_i}{n}) \]
+
+Bernoulli (where $\frac{\sum^{n}_{i=1}y_i}{n} \neq 1$)
+\[\frac{\partial}{\partial\eta}A(\eta) = \frac{e^{\eta}}{1+e^{\eta}} = \frac{\sum^{n}_{i=1}y_i}{n}\]
+\[\hat{\eta} = log(\frac{\frac{\sum^{n}_{i=1}y_i}{n}}{1-\frac{\sum^{n}_{i=1}y_i}{n}})\]
+
+Gaussian
+\[\frac{\partial}{\partial\eta}A(\eta) = \eta = \frac{\sum^{n}_{i=1}y_i}{n} \]
+\[\hat{\eta} = \frac{\sum^{n}_{i=1}y_i}{n}\]
+
+{\color{red} (c) (d)}
 \end{problem}
+
 
 \begin{problem}{2.4}
 \text{ }\\
-{\color{red} (a) (b) (c) (d) (e) (f)}
+
+(a) Based on the definition of MLE in GLM as well as stochastic gradient, we can redefine the function $L(\theta)$, the gradient $\triangle^{t} L(\theta)$, and the $\tilde{\theta}^{t+1}$ update step as:
+
+\[L(\theta) = -y_{I}x^{T}_{I}\theta^{t} + A(x^{T}_{I}\theta^{t})\]
+\[\triangle^{t}L(\theta) = -y_{I}x^{T}_{I} + x^{T}_{I}A'(x^{T}_{I}\theta^{t})\]
+\[\tilde{\theta}^{t+1} = \hat{\theta}^{t} - \gamma^{t} \triangle^{t}L(I)\]
+
+(b) Explicit updates for Possion and Logistic cases:
+
+Poisson
+\[A(t) = e^{t} \implies \tilde{\theta}^{t+1} = \hat{\theta}^{t} - \gamma^{t} x^{T}_{I}e^{x^{T}_{I}\theta^{t}}\]
+
+Logistic
+\[A(t) = log(1+e^{t}) \implies \tilde{\theta}^{t+1} = \hat{\theta}^{t} - \gamma^{t} x^{T}_{I}(\frac{e^{x^{T}_{I}\theta^{t}}}{1+e^{x^{T}_{I}\theta^{t}}})\]
+
+{\color{red}(c) (d) (e) (f)}
 
 \end{problem}
 
