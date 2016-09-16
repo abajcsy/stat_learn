@@ -75,7 +75,7 @@ y=
 
 (c) 
 {\color{red} How does the MSE behave as a function of D and why?}
-With the degree n-1 fit, we get no mean-squared error since the function fits to every data point. 
+With the degree n-1 fit, we get (approximately) zero mean-squared error since the function fits exactly to every data point. 
 {\color{red}What happens if you try to fit a polynomial of degree n? Why? To fit a polynomial of degree n, we will be solving $X\alpha = y$, where $X^{n~x~n}$.
 \[
 	\begin{bmatrix}
@@ -103,7 +103,7 @@ With the degree n-1 fit, we get no mean-squared error since the function fits to
 \]
 Using ordinary least-squares, we solve for $\alpha$ = $(X^{T}X)^{-1}X^{T}y$.}
 
-(d) Figure \ref{fig:2d} shows a plot of the degree $D \in {1,2,...n-1}$ versus the mean-squared error R(D) and $\tilde{R}$ when using the data in y.dat, yfresh.dat, and t.dat.  {\color{red}Why do you think that this plot is qualitatively different from the plot in part (b)?} {\color{red}What does this tell you how the fitted degree D should be chosen?}
+(d) Figure \ref{fig:2d} shows a plot of the degree $D \in {1,2,...n-1}$ versus the mean-squared error R(D) and $\tilde{R}$ when using the data in y.dat, yfresh.dat, and t.dat.  {\color{red}Why do you think that this plot is qualitatively different from the plot in part (b)?} Even though we are fitting D = n-1 degree polynomial to the new yfresh.dat data, the model was trained on y.dat and will approximate yfresh.dat with greater error than the data it was trained on and cannot be a perfect estimator. Thus, the error appears to plateu for the same values of D with yfresh.dat or y.dat but at a higher error value when using yfresh.dat. {\color{red}What does this tell you how the fitted degree D should be chosen?} Choose the minimal degree D after which the error doesn't change within some small $\epsilon$ bound. 
 \begin{figure}[h!]
   \centering
   \includegraphics[scale=0.5]{figs/2d.png}
