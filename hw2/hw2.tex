@@ -7,6 +7,30 @@
 \usepackage{subcaption}
 \usepackage[colorlinks]{hyperref}
 \usepackage{changepage}
+
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
 \def\infinity{\rotatebox{90}{8}}
  
 \newcommand{\N}{\mathbb{N}}
@@ -215,9 +239,25 @@ Substituting this back into our equation, we get:
 \end{adjustwidth}
 \[A^{*}(t) = tlog(t) e^{log(t)} = tlog(t) - t = t(log(t) - 1)\]
 
-(d) {\color{red} Prove that conjugate dual is always a convex function}
-
+(d) Prove that $A^{*}$ is always a convex function.
 \begin{proof}
+If $A^{*}$ is always a convex function, then it must satisfy the definition of convexity: 
+\[A^{*}(\alpha t_{1} + (1-\alpha)t_{2}) \leq \alpha A^{*}(t_{1}) + (1-\alpha)A^{*}(t_{2})\]
+
+We know that $A^{*}$ is defined by:
+\[A^{*}(\alpha t_{1} + (1-\alpha)t_{2}) = sup_{\eta}\left\{{\eta(\alpha t_{1} + (1-\alpha)t_{2}) - A(\eta)}\right\}\]
+\[= sup_{\eta}\left\{{\eta(\alpha t_{1} + (1-\alpha)t_{2}) - \alpha A(\eta) - (1-\alpha)A(\eta)}\right\}\]
+\[= sup_{\eta}\left\{{\alpha(\eta t_{1} - A(\eta)) + (1-\alpha)(\eta t_{2}-A(\eta))}\right\}\]
+
+Let $h(\eta) = \eta t_{1} - A(\eta)$ and $k(\eta) = \eta t_{2}-A(\eta)$. We know that: 
+\[sup_{\eta}(h(\eta) + k(\eta)) \leq sup_{\eta}(h(\eta)) + sup_{\eta}(k(\eta))\]
+
+By this property and after resubstituting, we have shown: 
+
+\[A^{*}(\alpha t_{1} + (1-\alpha)t_{2}) \leq \alpha A^{*}(t_{1}) + (1-\alpha)A^{*}(t_{2})\]
+
+And that $A^{*}$ is always a convex function. 
+
 \end{proof}
 
 \end{problem}
@@ -264,7 +304,9 @@ After some rearranging of terms, we get the final equation:
 
 \[\hat{\eta}= min_{\eta}\left\{ A(\eta) - A(\eta^{*}) - A'(\eta^{*})(\eta - \eta^{*})\right\} \]
 
-{\color{red}(d) Assume A is strictly convex.} 
+(d) Assume A is strictly convex and that $\eta^{*}$ is the true parameter. The we can see that $\eta^{*}$ minimizes the MLE equation since we have:
+\[\eta^{*}= min_{\eta}\left\{ A(\eta^{*}) - A(\eta^{*}) - A'(\eta^{*})(\eta^{*} - \eta^{*})\right\} = 0\]
+Hence, $\eta^{*}$ ensures that the equation is minimized. 
 
 \end{problem}
 
@@ -302,8 +344,242 @@ Logistic
   \label{fig:4d}
 \end{figure}
 
-{\color{red}(e) (f)}
+(e) See Figure \ref{fig:4e} for visualization of 2-component GMM to Xone.dat and Xtwo.dat.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.5]{figs/4e.png}
+  \caption{Results of fitting a 2-component GMM to Xone.dat and Xtwo.dat}
+  \label{fig:4e}
+\end{figure}
+
+(f) In part (e), the fitted mean vectors are:
+\[\mu_{GMM1}=
+	\begin{bmatrix}
+		3.03708769\\
+		-3.03958106\\
+		0.07311787\\
+		-0.03310467\\
+	 \end{bmatrix}
+   \mu_{GMM2}=
+	\begin{bmatrix}
+		2.96847677\\
+		3.01983729\\
+		-0.02951317\\
+		-0.06022483\\
+	 \end{bmatrix}
+\]
+
+\[\hat{\theta}_{Log1}=
+	\begin{bmatrix}
+		0.6304399\\
+		0.05635908\\
+	 \end{bmatrix}
+   \hat{\theta}_{Log2}=
+	\begin{bmatrix}
+		0.32693246\\
+		0.09650988\\
+	 \end{bmatrix}
+\]
 
 \end{problem}
 
+\begin{lstlisting}
+'''
+Implementation of polynomal fit.
+'''
+
+import numpy as np
+from numpy import *
+import matplotlib.pyplot as plt
+
+# fit a polynomial of degree to t and y data
+def polyfit_D(t, y, degree):
+	n = len(y)
+
+	# make a [N x (Degree+1)] matrix
+	X = np.zeros((n, degree+1))
+	for i in range(n):
+		for j in range(degree+1):
+			X[i][j] = (t[i])**j
+	#print X
+
+	# using ordinary least squares
+	# compute (X^T*X)^(-1) * X^T * y
+	XtX = np.dot(np.transpose(X),X)
+	inv_XtX = np.linalg.inv(XtX)
+	Xty = np.dot(np.transpose(X),y)
+	coeff = np.dot(inv_XtX, Xty)
+
+	return coeff
+
+# returns MSE values for polynomial fitting with degree = [deg_min, deg_max]
+# adjusted parameter determines if to add (sigma^2)*DLog(n)/n to MSE value
+def polyfit_D_range(t,y,y_tilde,deg_min,deg_max,adjusted):
+	i = 0
+
+	MSE_vals = np.zeros(deg_max-deg_min)
+	MSE_vals_ytilde = np.zeros(deg_max-deg_min)
+	D_vals = np.zeros(deg_max-deg_min)
+	# fit the data with a D degree polynomial
+	for D in range(deg_min, deg_max):
+		# compute coefficients for polynomial of degree D
+		coeffs = polyfit_D(t,y,D)
+		if(D == 3):
+			print coeffs
+		# reverse order of coefficients for poly1d function
+		rev_coeffs = np.fliplr([coeffs])[0]
+
+		# construct the polynomial for graphing
+		polyn = np.poly1d(rev_coeffs)
+		# compute mean squared error
+		MSE_vals[i] = MSE(t,y,polyn,D)
+		MSE_vals_ytilde[i] = MSE(t,y_tilde,polyn,D)
+		if(adjusted):
+			sigma_2 = 0.25**2
+			MSE_vals[i] += (sigma_2*D)*np.log(len(y))/len(y)
+		D_vals[i] = D
+		i += 1
+	return (D_vals, MSE_vals, MSE_vals_ytilde)
+
+# plot MSE vs degree for R(D) and F(D)
+def plot_MSE2(D_vals, MSE_vals_y1, MSE_vals_ytilde1):
+	# visualize degree vs. MSE
+	plt.plot(D_vals, MSE_vals_y1, 'o-b', D_vals, MSE_vals_ytilde1, 'o-g')
+	plt.title('Plot of the the mean-squared error vs. degree of polynomial')
+	plt.legend(['R(D)', 'R_tilde(D)'])
+	plt.xlabel('D values')
+	plt.ylabel('Mean-squared error')
+	plt.show()
+
+# compute mean squared error for estimated polynomial of degree D
+def MSE(t, y, polyn, D):
+	n = len(y)
+	sum = 0.0
+	for i in range(0,n):
+		sum += (y[i] - polyn(t[i])) ** 2
+
+	return sum/n
+
+if __name__ == "__main__":
+	t = np.loadtxt('data_problem2.1/t.dat')
+	y_orig = np.loadtxt('data_problem2.1/y.dat')
+	y_fresh = np.loadtxt('data_problem2.1/yfresh.dat')
+
+	# choose a y data source
+	y = y_orig
+	n = len(y) # 9 in this case
+
+	# R(D), R_tilde(D)
+	(D_vals1, MSE_vals_y1, MSE_vals_ytilde1) = polyfit_D_range(t, y_orig, y_fresh, 2, 10, 0);
+	# F(D), F_tilde(D)
+	(D_vals2, MSE_vals_y2, MSE_vals_ytilde2) = polyfit_D_range(t, y_orig, y_fresh, 2, 10, 1);
+
+	plot_MSE2(D_vals1, MSE_vals_y1, MSE_vals_ytilde1)
+	plot_MSE2(D_vals2, MSE_vals_ytilde1, MSE_vals_y2)
+
+\end{lstlisting}
+
+\begin{lstlisting}
+"""
+Implementation of stochastic gradient descent.
+"""
+import numpy as np
+from numpy import *
+import matplotlib.pyplot as plt
+
+def log_loss(X,y,theta):
+    sum = 0
+    for i in range(m):
+        sum += log(1+np.exp(-y[i]*((theta.T)*X[i] + b)))
+    sum = -sum
+
+def stoch_gd(X, y, numIter, stepSize, epsilon):
+    (m,n) = np.shape(X)
+    theta = np.random.rand(n)
+
+    # begin iterations
+    for i in range(numIter):
+        I = np.random.randint(0,m)
+
+        extheta = np.exp((theta.T)*X[I])
+        # compute the gradient at the current location
+        g = -y[I]*X[I] + X[I]*extheta/(1+extheta)
+
+        # step in the direction of the gradient
+        theta2 = theta - (stepSize/(i+1))*g
+
+        if(np.dot(theta2-theta, theta2-theta) < epsilon):
+            return theta
+        else:
+            theta = theta2
+
+    # return the solution
+    return theta
+
+
+if __name__ == '__main__':
+    Xone = np.loadtxt('data_problem2.4/Xone.dat')
+    yone = np.loadtxt('data_problem2.4/yone.dat')
+
+    Xtwo = np.loadtxt('data_problem2.4/Xtwo.dat')
+    ytwo = np.loadtxt('data_problem2.4/ytwo.dat')
+
+    (m,n) = np.shape(Xone)
+    # take number of iterations to be number of examples
+    numIter = m
+    epsilon = 0.0000000000001
+    stepSize = 0.01
+
+    # data set #1
+    theta_hat1 = stoch_gd(Xone, yone, numIter, stepSize, epsilon)
+    e_yxtheta1 = np.exp(yone*np.dot(Xone,theta_hat1))
+    p_one = e_yxtheta1/(1+e_yxtheta1)
+
+    # data set #2
+    theta_hat2 = stoch_gd(Xtwo, ytwo, numIter, stepSize, epsilon)
+    e_yxtheta2 = np.exp(ytwo*np.dot(Xtwo,theta_hat2))
+    p_two = e_yxtheta2/(1+e_yxtheta2)
+
+    bins = np.linspace(0, 1, 40)
+
+    plt.title("Histogram of probabilities based on theta_hat")
+    plt.xlabel("Probability: P(y_i | x_i, theta_hat)")
+    plt.ylabel("Number of samples with given probability")
+    #plt.hist(p_one, bins)
+    plt.hist(p_two, bins, facecolor='green')
+    plt.show()
+
+\end{lstlisting}
+
+\begin{lstlisting}
+"""
+Implementation of 2-component GMM.
+"""
+import numpy as np
+from numpy import *
+import matplotlib.pyplot as plt
+from sklearn import mixture
+
+def run_gmm(X, num_components):
+    gmm = mixture.GMM(n_components=num_components, covariance_type='full')
+    gmm.fit(X)
+    print gmm.means_
+    colors = ['r' if i==0 else 'b' for i in gmm.predict(X)]
+    p = plt.gca()
+    p.scatter(X[:,0], X[:,1], c=colors)
+    plt.title("2-component GMM for Xone and Xtwo datasets")
+    plt.show()
+
+
+if __name__ == '__main__':
+    Xone = np.loadtxt('data_problem2.4/Xone.dat')
+    Xtwo = np.loadtxt('data_problem2.4/Xtwo.dat')
+
+    yone = np.loadtxt('data_problem2.4/yone.dat')
+    ytwo = np.loadtxt('data_problem2.4/ytwo.dat')
+
+    X = np.concatenate((Xone, Xtwo), axis=1)
+
+    run_gmm(X, 2)
+\end{lstlisting}
 \end{document}

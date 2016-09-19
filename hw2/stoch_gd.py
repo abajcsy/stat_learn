@@ -58,6 +58,9 @@ if __name__ == '__main__':
     e_yxtheta2 = np.exp(ytwo*np.dot(Xtwo,theta_hat2))
     p_two = e_yxtheta2/(1+e_yxtheta2)
 
+    #print theta_hat1
+    #print theta_hat2
+
     bins = np.linspace(0, 1, 40)
 
     plt.title("Histogram of probabilities based on theta_hat")
