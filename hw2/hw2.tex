@@ -61,7 +61,7 @@
 \begin{problem}{2.1}
 \text{ }\\
 
-(a) We can formulate the polynomial regression problem as a form of linear prediction by soliving the general linear model equation $X\alpha = y$ where:
+(a) We can formulate the polynomial regression problem as a form of linear prediction by solving the general linear model equation $X\alpha = y$ where:
 \\
 \[
 X=
@@ -99,7 +99,7 @@ y=
 \end{figure}
 
 (c) 
-With the degree n-1 fit, we get (approximately) zero mean-squared error since the function fits exactly to every data point. What happens if you try to fit a polynomial of degree n? Why? To fit a polynomial of degree n, we will be solving $X\alpha = y$, where $X^{n~x~n}$.
+With the degree n-1 fit, we get zero mean-squared error since the function fits exactly to every data point. If we try and fit a polynomial of degree n, we will be solving $X\alpha = y$, where $X^{n~x~n+1}$.
 \[
 	\begin{bmatrix}
 	1 & t_{1} & t^2_{1} & ... & t^n_{1}\\
@@ -124,9 +124,9 @@ With the degree n-1 fit, we get (approximately) zero mean-squared error since th
 		y_{n}\\
 	 \end{bmatrix}
 \]
-Using ordinary least-squares, we solve for $\alpha$ = $(X^{T}X)^{-1}X^{T}y$. We see there are more columns than rows, so the matrix $X^{T}X$ will not be invertible and the solution is not defined. 
+Using ordinary least-squares, we would solve for $\alpha$ = $(X^{T}X)^{-1}X^{T}y$. However, we see there are more columns than rows, so the matrix $X^{T}X^{-1}$ will not be invertible and we will not be able to obtain a solution. 
 
-(d) Figure \ref{fig:2d} shows a plot of the degree $D \in {1,2,...n-1}$ versus the mean-squared error R(D) and $\tilde{R}$ when using the data in y.dat, yfresh.dat, and t.dat. Even though we are fitting D = n-1 degree polynomial to the new yfresh.dat data, the model was trained on y.dat and will approximate yfresh.dat with greater error than the data it was trained on and cannot be a perfect estimator. Thus, the error appears to plateu for the same values of D with yfresh.dat or y.dat but at a higher error value when using yfresh.dat. Choose the minimal degree D after which the error doesn't change within some small $\epsilon$ bound. This ensures that you will not be overfitting. 
+(d) Figure \ref{fig:2d} shows a plot of the degree $D \in {1,2,...n-1}$ versus the mean-squared error R(D) and $\tilde{R}$ when using the data in y.dat, yfresh.dat, and t.dat. Since the model was trained on y.dat, then it will approximate yfresh.dat with greater error than the data it was trained on since it cannot be a perfect estimator. Note that the error appears to plateu for the same values of D with yfresh.dat or y.dat but at a higher error value when using yfresh.dat. We would want to choose the degree D where the error is at a minimum to ensure that we are not be overfitting the data. 
 \begin{figure}[h!]
   \centering
   \includegraphics[scale=0.5]{figs/2d.png}
@@ -134,7 +134,7 @@ Using ordinary least-squares, we solve for $\alpha$ = $(X^{T}X)^{-1}X^{T}y$. We 
   \label{fig:2d}
 \end{figure}
 
-(e) Figure \ref{fig:2e} shows a plot of the degree $D \in {2,...9}$ versus the mean-squared error $\tilde{R}$ and F(D) when using the data in y.dat, yfresh.dat, and t.dat. The minimizing arguments of the two functions related in that F(D) adds an extra cost on the number of degrees you are using. Since the lowest error for R(D) and $\tilde(R(D))$ functions when D=3, so we see a penalization of greater D's. 
+(e) Figure \ref{fig:2e} shows a plot of the degree $D \in {2,...9}$ versus the mean-squared error $\tilde{R}$ and F(D) when using the data in y.dat, yfresh.dat, and t.dat. The minimizing arguments of the two functions are related in that F(D) adds an extra cost based on the number of degrees that we are fitting. The lowest error for R(D) and $\tilde{R}(D)$ occurs when D=3, after which we see a penalization of greater D's in F(D) and higher error rates in $\tilde{R}(D)$. 
 \begin{figure}[h!]
   \centering
   \includegraphics[scale=0.5]{figs/2e_2.png}
@@ -254,7 +254,7 @@ By this property and after resubstituting, we have shown:
 
 \[A^{*}(\alpha t_{1} + (1-\alpha)t_{2}) \leq \alpha A^{*}(t_{1}) + (1-\alpha)A^{*}(t_{2})\]
 
-And that $A^{*}$ is always a convex function. 
+and that $A^{*}$ is always a convex function. 
 
 \end{proof}
 
@@ -310,13 +310,11 @@ After some rearranging of terms, we get the final equation:
 
 (d) 
 \begin{adjustwidth}{2.5em}{0pt}
-Assume A is strictly convex and that $\eta^{*}$ is the true parameter. The we can see that $\eta^{*}$ minimizes the MLE equation since we have:
-\end{adjustwidth}
+Assume A is strictly convex and that $\eta^{*}$ is the true parameter. We can look at the objective function that we are trying to minimize to determine how to bound $\eta \neq \eta^{*}$ such that:
 
-\[\eta^{*}= min_{\eta}\left\{ A(\eta^{*}) - A(\eta^{*}) - A'(\eta^{*})(\eta^{*} - \eta^{*})\right\} = 0\]
+\[A(\eta) > A(\eta)-A(\eta^{*})-A'(\eta^{*})(\eta-\eta^{*}) = 0 = A(\eta^{*})-A(\eta^{*}-A'(\eta^{*})(\eta^{*}-\eta^{*})\]
 
-\begin{adjustwidth}{2.5em}{0pt}
-Hence, $\eta^{*}$ ensures that the equation is minimized. 
+Notice that this implies that the minimizing value of $\eta$ must be $\eta^{*}$ as n approaches infinity and for A strictly convex in order for this to hold. Thus, $\hat{\eta} = \eta^{*}.$
 \end{adjustwidth}
 
 \end{problem}
@@ -345,7 +343,7 @@ Logistic
   \label{fig:4c}
 \end{figure}
 
-(d) Figure \ref{fig:4d} shows a histogram plot of the probabilities $P[y_i | x_i;\hat{\theta}]$  based on fitted vector $\hat{\theta}$ and files Xtwo.dat and ytwo.dat.The differences in Figure \ref{fig:4c} and \ref{fig:4d} suggest that it is easier to separate the data in Figure \ref{fig:4c} into two clusters (leading to more accurate fit) than the data in Figure \ref{fig:4d} which is all centered around 0.5.
+(d) Figure \ref{fig:4d} shows a histogram plot of the probabilities $P[y_i | x_i;\hat{\theta}]$  based on fitted vector $\hat{\theta}$ and files Xtwo.dat and ytwo.dat.The differences in Figure \ref{fig:4c} and \ref{fig:4d} suggest that it is easier to separate the data in Figure \ref{fig:4c} into two clusters (leading to more accurate fit) than the data in Figure \ref{fig:4d} which is all centered around 0.5. It also suggests that the model is not learning anything new with the second dataset becuase most data points are assigned with probability=0.5, which with binary labels is what we would expect at random. 
 \begin{figure}[h!]
   \centering
   \includegraphics[scale=0.5]{figs/4d.png}
@@ -353,13 +351,21 @@ Logistic
   \label{fig:4d}
 \end{figure}
 
-(e) See Figure \ref{fig:4e} for visualization of 2-component GMM to Xone.dat and Xtwo.dat.
+(e) See Figure \ref{fig:4e_1} and \ref{fig:4e_2} for a visualization of a fitted 2-component GMM for Xone.dat and Xtwo.dat using labels in yone.dat and ytwo.dat.
+
 \begin{figure}[h!]
   \centering
-  \includegraphics[scale=0.5]{figs/4e.png}
-  \caption{Results of fitting a 2-component GMM to Xone.dat and Xtwo.dat}
-  \label{fig:4e}
+  \includegraphics[scale=0.35]{figs/4f_1.png}
+  \caption{Results of fitting a 2-component GMM to Xone.dat using labels in yone.dat. Red dots indicate the means of the clusters.}
+  \label{fig:4e_1}
 \end{figure}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.35]{figs/4f_2.png}
+  \caption{Results of fitting a 2-component GMM to Xtwo.dat using labels in ytwo.dat. Red dots indicate the means of the clusters.}
+  \label{fig:4e_2}
+\end{figure}
+
 
 (f) In part (e), the fitted mean vectors and the $\hat{\theta}$:
 \[\mu_{Xone1label}=
@@ -397,208 +403,7 @@ Logistic
 		-0.02374169\\
 	 \end{bmatrix}
 \]
-
+If for each data matrix you take the line perpendicular to the vector formed by the difference of the two means, then the $\hat{\theta}$ vectors will be perpendicular to this line. As seen in Figures \ref{fig:4e_1},~\ref{fig:4e_2}, this line attempts to partition the data based on the given labels, and the $\hat{\theta}$ is it's normal vector.
 \end{problem}
 
-\begin{lstlisting}
-'''
-Implementation of polynomal fit.
-'''
-
-import numpy as np
-from numpy import *
-import matplotlib.pyplot as plt
-
-# fit a polynomial of degree to t and y data
-def polyfit_D(t, y, degree):
-	n = len(y)
-
-	# make a [N x (Degree+1)] matrix
-	X = np.zeros((n, degree+1))
-	for i in range(n):
-		for j in range(degree+1):
-			X[i][j] = (t[i])**j
-	#print X
-
-	# using ordinary least squares
-	# compute (X^T*X)^(-1) * X^T * y
-	XtX = np.dot(np.transpose(X),X)
-	inv_XtX = np.linalg.inv(XtX)
-	Xty = np.dot(np.transpose(X),y)
-	coeff = np.dot(inv_XtX, Xty)
-
-	return coeff
-
-# returns MSE values for polynomial fitting with degree = [deg_min, deg_max]
-# adjusted parameter determines if to add (sigma^2)*DLog(n)/n to MSE value
-def polyfit_D_range(t,y,y_tilde,deg_min,deg_max,adjusted):
-	i = 0
-
-	MSE_vals = np.zeros(deg_max-deg_min)
-	MSE_vals_ytilde = np.zeros(deg_max-deg_min)
-	D_vals = np.zeros(deg_max-deg_min)
-	# fit the data with a D degree polynomial
-	for D in range(deg_min, deg_max):
-		# compute coefficients for polynomial of degree D
-		coeffs = polyfit_D(t,y,D)
-		if(D == 3):
-			print coeffs
-		# reverse order of coefficients for poly1d function
-		rev_coeffs = np.fliplr([coeffs])[0]
-
-		# construct the polynomial for graphing
-		polyn = np.poly1d(rev_coeffs)
-		# compute mean squared error
-		MSE_vals[i] = MSE(t,y,polyn,D)
-		MSE_vals_ytilde[i] = MSE(t,y_tilde,polyn,D)
-		if(adjusted):
-			sigma_2 = 0.25**2
-			MSE_vals[i] += (sigma_2*D)*np.log(len(y))/len(y)
-		D_vals[i] = D
-		i += 1
-	return (D_vals, MSE_vals, MSE_vals_ytilde)
-
-# plot MSE vs degree for R(D) and F(D)
-def plot_MSE2(D_vals, MSE_vals_y1, MSE_vals_ytilde1):
-	# visualize degree vs. MSE
-	plt.plot(D_vals, MSE_vals_y1, 'o-b', D_vals, MSE_vals_ytilde1, 'o-g')
-	plt.title('Plot of the the mean-squared error vs. degree of polynomial')
-	plt.legend(['R(D)', 'R_tilde(D)'])
-	plt.xlabel('D values')
-	plt.ylabel('Mean-squared error')
-	plt.show()
-
-# compute mean squared error for estimated polynomial of degree D
-def MSE(t, y, polyn, D):
-	n = len(y)
-	sum = 0.0
-	for i in range(0,n):
-		sum += (y[i] - polyn(t[i])) ** 2
-
-	return sum/n
-
-if __name__ == "__main__":
-	t = np.loadtxt('data_problem2.1/t.dat')
-	y_orig = np.loadtxt('data_problem2.1/y.dat')
-	y_fresh = np.loadtxt('data_problem2.1/yfresh.dat')
-
-	# choose a y data source
-	y = y_orig
-	n = len(y) # 9 in this case
-
-	# R(D), R_tilde(D)
-	(D_vals1, MSE_vals_y1, MSE_vals_ytilde1) = polyfit_D_range(t, y_orig, y_fresh, 2, 10, 0);
-	# F(D), F_tilde(D)
-	(D_vals2, MSE_vals_y2, MSE_vals_ytilde2) = polyfit_D_range(t, y_orig, y_fresh, 2, 10, 1);
-
-	plot_MSE2(D_vals1, MSE_vals_y1, MSE_vals_ytilde1)
-	plot_MSE2(D_vals2, MSE_vals_ytilde1, MSE_vals_y2)
-
-\end{lstlisting}
-
-\begin{lstlisting}
-"""
-Implementation of stochastic gradient descent.
-"""
-import numpy as np
-from numpy import *
-import matplotlib.pyplot as plt
-
-def log_loss(X,y,theta):
-    sum = 0
-    for i in range(m):
-        sum += log(1+np.exp(-y[i]*((theta.T)*X[i] + b)))
-    sum = -sum
-
-def stoch_gd(X, y, numIter, stepSize, epsilon):
-    (m,n) = np.shape(X)
-    theta = np.random.rand(n)
-
-    # begin iterations
-    for i in range(numIter):
-        I = np.random.randint(0,m)
-
-        # extheta = np.exp((theta.T)*X[I])
-        # compute the gradient at the current location
-        g = y[I]*X[I] - X[I]*1.0/(1.0+np.exp(-(theta.T)*X[I]))
-
-        # step in the direction of the gradient
-        theta2 = theta + (1.0/(i+1.0))*g
-
-        if(np.dot(theta2-theta, theta2-theta) < epsilon):
-            return theta
-        else:
-            theta = theta2
-
-    # return the solution
-    return theta
-
-
-if __name__ == '__main__':
-    Xone = np.loadtxt('data_problem2.4/Xone.dat')
-    yone = np.loadtxt('data_problem2.4/yone.dat')
-
-    Xtwo = np.loadtxt('data_problem2.4/Xtwo.dat')
-    ytwo = np.loadtxt('data_problem2.4/ytwo.dat')
-
-    (m,n) = np.shape(Xone)
-    # take number of iterations to be number of examples
-    numIter = 10000
-    epsilon = 0.0000000000001
-    stepSize = 0.01
-
-    # data set #1
-    theta_hat1 = stoch_gd(Xone, yone, numIter, stepSize, epsilon)
-    e_yxtheta1 = np.exp(-np.dot(Xone,theta_hat1))
-    p_one = 1.0/(1.0+e_yxtheta1)
-
-    # data set #2
-    theta_hat2 = stoch_gd(Xtwo, ytwo, numIter, stepSize, epsilon)
-    e_yxtheta2 = np.exp(-np.dot(Xtwo,theta_hat2))
-    p_two = 1.0/(1.0+e_yxtheta2)
-
-    print theta_hat1
-    print theta_hat2
-
-    bins = np.linspace(0, 1, 40)
-
-    plt.title("Histogram of probabilities based on theta_hat")
-    plt.xlabel("Probability: P(y_i | x_i, theta_hat)")
-    plt.ylabel("Number of samples with given probability")
-    #plt.hist(p_one, bins)
-    plt.hist(p_two, bins, facecolor='green')
-    plt.show()
-\end{lstlisting}
-
-\begin{lstlisting}
-"""
-Implementation of 2-component GMM.
-"""
-import numpy as np
-from numpy import *
-import matplotlib.pyplot as plt
-from sklearn import mixture
-
-def run_gmm(X, num_components):
-    gmm = mixture.GMM(n_components=num_components, covariance_type='full')
-    gmm.fit(X)
-    print gmm.means_
-    colors = ['r' if i==0 else 'b' for i in gmm.predict(X)]
-    p = plt.gca()
-    p.scatter(X[:,0], X[:,1], c=colors)
-    plt.title("2-component GMM for Xone and Xtwo datasets")
-    plt.show()
-
-
-if __name__ == '__main__':
-    Xone = np.loadtxt('data_problem2.4/Xone.dat')
-    Xtwo = np.loadtxt('data_problem2.4/Xtwo.dat')
-
-    yone = np.loadtxt('data_problem2.4/yone.dat')
-    ytwo = np.loadtxt('data_problem2.4/ytwo.dat')
-
-    X = np.concatenate((Xone, Xtwo), axis=1)
-
-    run_gmm(X, 2)
-\end{lstlisting}
 \end{document}
