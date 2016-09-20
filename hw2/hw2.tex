@@ -5,7 +5,7 @@
 \usepackage{graphics}
 \usepackage{graphicx}
 \usepackage{subcaption}
-\usepackage[colorlinks]{hyperref}
+\usepackage{hyperref}
 \usepackage{changepage}
 
 \usepackage{listings}
@@ -99,9 +99,7 @@ y=
 \end{figure}
 
 (c) 
-{\color{red} How does the MSE behave as a function of D and why?}
-With the degree n-1 fit, we get (approximately) zero mean-squared error since the function fits exactly to every data point. 
-{\color{red}What happens if you try to fit a polynomial of degree n? Why? To fit a polynomial of degree n, we will be solving $X\alpha = y$, where $X^{n~x~n}$.
+With the degree n-1 fit, we get (approximately) zero mean-squared error since the function fits exactly to every data point. What happens if you try to fit a polynomial of degree n? Why? To fit a polynomial of degree n, we will be solving $X\alpha = y$, where $X^{n~x~n}$.
 \[
 	\begin{bmatrix}
 	1 & t_{1} & t^2_{1} & ... & t^n_{1}\\
@@ -126,9 +124,9 @@ With the degree n-1 fit, we get (approximately) zero mean-squared error since th
 		y_{n}\\
 	 \end{bmatrix}
 \]
-Using ordinary least-squares, we solve for $\alpha$ = $(X^{T}X)^{-1}X^{T}y$.}
+Using ordinary least-squares, we solve for $\alpha$ = $(X^{T}X)^{-1}X^{T}y$. We see there are more columns than rows, so the matrix $X^{T}X$ will not be invertible and the solution is not defined. 
 
-(d) Figure \ref{fig:2d} shows a plot of the degree $D \in {1,2,...n-1}$ versus the mean-squared error R(D) and $\tilde{R}$ when using the data in y.dat, yfresh.dat, and t.dat.  {\color{red}Why do you think that this plot is qualitatively different from the plot in part (b)?} Even though we are fitting D = n-1 degree polynomial to the new yfresh.dat data, the model was trained on y.dat and will approximate yfresh.dat with greater error than the data it was trained on and cannot be a perfect estimator. Thus, the error appears to plateu for the same values of D with yfresh.dat or y.dat but at a higher error value when using yfresh.dat. {\color{red}What does this tell you how the fitted degree D should be chosen?} Choose the minimal degree D after which the error doesn't change within some small $\epsilon$ bound. 
+(d) Figure \ref{fig:2d} shows a plot of the degree $D \in {1,2,...n-1}$ versus the mean-squared error R(D) and $\tilde{R}$ when using the data in y.dat, yfresh.dat, and t.dat. Even though we are fitting D = n-1 degree polynomial to the new yfresh.dat data, the model was trained on y.dat and will approximate yfresh.dat with greater error than the data it was trained on and cannot be a perfect estimator. Thus, the error appears to plateu for the same values of D with yfresh.dat or y.dat but at a higher error value when using yfresh.dat. Choose the minimal degree D after which the error doesn't change within some small $\epsilon$ bound. This ensures that you will not be overfitting. 
 \begin{figure}[h!]
   \centering
   \includegraphics[scale=0.5]{figs/2d.png}
@@ -136,10 +134,10 @@ Using ordinary least-squares, we solve for $\alpha$ = $(X^{T}X)^{-1}X^{T}y$.}
   \label{fig:2d}
 \end{figure}
 
-(e) Figure \ref{fig:2e} shows a plot of the degree $D \in {2,...9}$ versus the mean-squared error $\tilde{R}$ and F(D) when using the data in y.dat, yfresh.dat, and t.dat. {\color{red}How are the minimizing arguments of the two functions related?} {\color{red}Why is this an interesting observation?}
+(e) Figure \ref{fig:2e} shows a plot of the degree $D \in {2,...9}$ versus the mean-squared error $\tilde{R}$ and F(D) when using the data in y.dat, yfresh.dat, and t.dat. The minimizing arguments of the two functions related in that F(D) adds an extra cost on the number of degrees you are using. Since the lowest error for R(D) and $\tilde(R(D))$ functions when D=3, so we see a penalization of greater D's. 
 \begin{figure}[h!]
   \centering
-  \includegraphics[scale=0.5]{figs/2e.png}
+  \includegraphics[scale=0.5]{figs/2e_2.png}
   \caption{D vs. $\tilde{R}$ and F(D)}
   \label{fig:2e}
 \end{figure}
@@ -207,7 +205,7 @@ Substituting this back into our equation, we get:
 \[A^{*}(t) = -tlog(\frac{1}{t}-1) - log(1+e^{-log(\frac{1}{t}-1)}) = -tlog(\frac{1}{t}-1) + log(1-t)\]
 \[= tlog(t) - tlog(1-t) + log(1-t) = tlog(t) + (1-t)log(1-t)\]
 
-(ii) Gaussian random variable:
+(ii) Gaussian random variable (based on notes from class):
 \\
 \[p_{\eta}(y) = \frac{e^{\frac{-y^{2}}{2}}}{\sqrt{2\pi}}e^{yn - \frac{\eta^2}{2}}\]
 
@@ -292,21 +290,34 @@ Gaussian
 \[\hat{\eta} = \frac{\sum^{n}_{i=1}y_i}{n}\]
 
 (c)
+\begin{adjustwidth}{2.5em}{0pt}
+We know that $E(\bar{y}) = A'(\eta^{*})$ and by definition of MLE with respect to $\eta$, we have:
+\end{adjustwidth}
 
-We know that $E(\bar{y}) = A'(\eta^{*})$ and by definition of MLE, we have:
 \[max_{\eta}\left\{{\eta\sum^{n}_{i=1}{y_i}-nA(\eta)}\right\} = max_{\eta}\left\{{\eta\bar{y}-A(\eta)}\right\} = min_{\eta}\left\{{-\eta\bar{y}+A(\eta)}\right\}\]
 
+\begin{adjustwidth}{2.5em}{0pt}
 Thus, we know that as $n \rightarrow \infinity$, then $\bar{y} \rightarrow A'(\eta^{*})$. Additionally, we can add or subtract any terms to this equation that do not depend on $\eta$, since they are just constants. We can substitute this into the above equation to get:
+\end{adjustwidth}
 
 \[\hat{\eta} = min_{\eta}\left\{{-\eta A'(\eta^{*})+A(\eta)}\right\} = min_{\eta}\left\{{-\eta A'(\eta^{*})+A(\eta) + \eta^{*}A'(\eta^{*}) - A(\eta^{*})}\right\}\]
 
+\begin{adjustwidth}{2.5em}{0pt}
 After some rearranging of terms, we get the final equation:
+\end{adjustwidth}
 
 \[\hat{\eta}= min_{\eta}\left\{ A(\eta) - A(\eta^{*}) - A'(\eta^{*})(\eta - \eta^{*})\right\} \]
 
-(d) Assume A is strictly convex and that $\eta^{*}$ is the true parameter. The we can see that $\eta^{*}$ minimizes the MLE equation since we have:
+(d) 
+\begin{adjustwidth}{2.5em}{0pt}
+Assume A is strictly convex and that $\eta^{*}$ is the true parameter. The we can see that $\eta^{*}$ minimizes the MLE equation since we have:
+\end{adjustwidth}
+
 \[\eta^{*}= min_{\eta}\left\{ A(\eta^{*}) - A(\eta^{*}) - A'(\eta^{*})(\eta^{*} - \eta^{*})\right\} = 0\]
+
+\begin{adjustwidth}{2.5em}{0pt}
 Hence, $\eta^{*}$ ensures that the equation is minimized. 
+\end{adjustwidth}
 
 \end{problem}
 
@@ -314,29 +325,27 @@ Hence, $\eta^{*}$ ensures that the equation is minimized.
 \begin{problem}{2.4}
 \text{ }\\
 
-(a) Based on the definition of MLE in GLM as well as stochastic gradient, we can redefine the function $L(\theta)$, the gradient $\triangle^{t} L(\theta)$, and the $\tilde{\theta}^{t+1}$ update step as:
+(a) Based on the definition of MLE in GLM as well as stochastic gradient from the course reader, the update step can be written with $\mu$ as the canoniucal response function as:
 
-\[L(\theta) = -y_{I}x^{T}_{I}\theta^{t} + A(x^{T}_{I}\theta^{t})\]
-\[\triangle^{t}L(\theta) = -y_{I}x^{T}_{I} + x^{T}_{I}A'(x^{T}_{I}\theta^{t})\]
-\[\tilde{\theta}^{t+1} = \hat{\theta}^{t} - \gamma^{t} \triangle^{t}L(I)\]
+\[\tilde{\theta}^{t+1} = \hat{\theta}^{t} + p(y_{n}-\mu^{t}_{n})x_{n}\]
 
 (b) Explicit updates for Possion and Logistic cases:
 
 Poisson
-\[A(t) = e^{t} \implies \tilde{\theta}^{t+1} = \hat{\theta}^{t} - \gamma^{t} x^{T}_{I}e^{x^{T}_{I}\theta^{t}}\]
+\[A(t) = e^{t} \implies \tilde{\theta}^{t+1} = \hat{\theta}^{t} + p(y_{n}-e^{x^{T}_{n} \theta^{t}})x_{n}\]
 
 Logistic
-\[A(t) = log(1+e^{t}) \implies \tilde{\theta}^{t+1} = \hat{\theta}^{t} - \gamma^{t} x^{T}_{I}(\frac{e^{x^{T}_{I}\theta^{t}}}{1+e^{x^{T}_{I}\theta^{t}}})\]
+\[A(t) = log(1+e^{t}) \implies \tilde{\theta}^{t+1} = \hat{\theta}^{t} + p(y_{n}-\frac{1}{1+e^{x^{T}_{I}\theta^{t}}})x_{n}\]
 
 (c) Figure \ref{fig:4c} shows a histogram plot of the probabilities $P[y_i | x_i;\hat{\theta}]$  based on fitted vector $\hat{\theta}$ and files Xone.dat and yone.dat.
 \begin{figure}[h!]
   \centering
-  \includegraphics[scale=0.5]{figs/4c.png}
+  \includegraphics[scale=0.5]{figs/4c_new.png}
   \caption{Histogram of probabilities using Xone.dat and yone.dat}
   \label{fig:4c}
 \end{figure}
 
-(d) Figure \ref{fig:4d} shows a histogram plot of the probabilities $P[y_i | x_i;\hat{\theta}]$  based on fitted vector $\hat{\theta}$ and files Xtwo.dat and ytwo.dat. {\color{red} The differences in Figure \ref{fig:4c} and \ref{fig:4d} are [~~~~~~~~~] and suggest about the accuracy of the fits.}
+(d) Figure \ref{fig:4d} shows a histogram plot of the probabilities $P[y_i | x_i;\hat{\theta}]$  based on fitted vector $\hat{\theta}$ and files Xtwo.dat and ytwo.dat.The differences in Figure \ref{fig:4c} and \ref{fig:4d} suggest that it is easier to separate the data in Figure \ref{fig:4c} into two clusters (leading to more accurate fit) than the data in Figure \ref{fig:4d} which is all centered around 0.5.
 \begin{figure}[h!]
   \centering
   \includegraphics[scale=0.5]{figs/4d.png}
@@ -352,32 +361,40 @@ Logistic
   \label{fig:4e}
 \end{figure}
 
-(f) In part (e), the fitted mean vectors are:
-\[\mu_{GMM1}=
+(f) In part (e), the fitted mean vectors and the $\hat{\theta}$:
+\[\mu_{Xone1label}=
 	\begin{bmatrix}
 		3.03708769\\
-		-3.03958106\\
-		0.07311787\\
-		-0.03310467\\
+		-3.03958106 
 	 \end{bmatrix}
-   \mu_{GMM2}=
+   \mu_{Xone0label}=
 	\begin{bmatrix}
-		2.96847677\\
-		3.01983729\\
-		-0.02951317\\
-		-0.06022483\\
+		2.9674205\\
+		3.02468416\\
 	 \end{bmatrix}
 \]
 
-\[\hat{\theta}_{Log1}=
+\[\mu_{Xtwo1label}=
 	\begin{bmatrix}
-		0.6304399\\
-		0.05635908\\
+		0.03544899\\
+		-0.09377857
 	 \end{bmatrix}
-   \hat{\theta}_{Log2}=
+   \mu_{Xtwo0label}=
 	\begin{bmatrix}
-		0.32693246\\
-		0.09650988\\
+		0.01322437\\
+		-0.00039517
+	 \end{bmatrix}
+\]
+
+\[\hat{\theta}_{LogXone}=
+	\begin{bmatrix}
+		0.03971547\\
+		-1.69052142\\
+	 \end{bmatrix}
+   \hat{\theta}_{LogXtwo}=
+	\begin{bmatrix}
+		-0.01176046\\
+		-0.02374169\\
 	 \end{bmatrix}
 \]
 
@@ -501,12 +518,12 @@ def stoch_gd(X, y, numIter, stepSize, epsilon):
     for i in range(numIter):
         I = np.random.randint(0,m)
 
-        extheta = np.exp((theta.T)*X[I])
+        # extheta = np.exp((theta.T)*X[I])
         # compute the gradient at the current location
-        g = -y[I]*X[I] + X[I]*extheta/(1+extheta)
+        g = y[I]*X[I] - X[I]*1.0/(1.0+np.exp(-(theta.T)*X[I]))
 
         # step in the direction of the gradient
-        theta2 = theta - (stepSize/(i+1))*g
+        theta2 = theta + (1.0/(i+1.0))*g
 
         if(np.dot(theta2-theta, theta2-theta) < epsilon):
             return theta
@@ -526,19 +543,22 @@ if __name__ == '__main__':
 
     (m,n) = np.shape(Xone)
     # take number of iterations to be number of examples
-    numIter = m
+    numIter = 10000
     epsilon = 0.0000000000001
     stepSize = 0.01
 
     # data set #1
     theta_hat1 = stoch_gd(Xone, yone, numIter, stepSize, epsilon)
-    e_yxtheta1 = np.exp(yone*np.dot(Xone,theta_hat1))
-    p_one = e_yxtheta1/(1+e_yxtheta1)
+    e_yxtheta1 = np.exp(-np.dot(Xone,theta_hat1))
+    p_one = 1.0/(1.0+e_yxtheta1)
 
     # data set #2
     theta_hat2 = stoch_gd(Xtwo, ytwo, numIter, stepSize, epsilon)
-    e_yxtheta2 = np.exp(ytwo*np.dot(Xtwo,theta_hat2))
-    p_two = e_yxtheta2/(1+e_yxtheta2)
+    e_yxtheta2 = np.exp(-np.dot(Xtwo,theta_hat2))
+    p_two = 1.0/(1.0+e_yxtheta2)
+
+    print theta_hat1
+    print theta_hat2
 
     bins = np.linspace(0, 1, 40)
 
@@ -548,7 +568,6 @@ if __name__ == '__main__':
     #plt.hist(p_one, bins)
     plt.hist(p_two, bins, facecolor='green')
     plt.show()
-
 \end{lstlisting}
 
 \begin{lstlisting}

@@ -72,11 +72,11 @@ def plot_MSE(D_vals, MSE_vals):
 	plt.show()
 
 # plot MSE vs degree for R(D) and F(D)
-def plot_MSE2(D_vals, MSE_vals_y1, MSE_vals_ytilde1):
+def plot_MSE3(D_vals, MSE_vals_R, MSE_vals_Rtilde, MSE_vals_F):
 	# visualize degree vs. MSE
-	plt.plot(D_vals, MSE_vals_y1, 'o-b', D_vals, MSE_vals_ytilde1, 'o-g')
+	plt.plot(D_vals, MSE_vals_R, 'o-b', D_vals, MSE_vals_Rtilde, 'o-g', D_vals, MSE_vals_F, 'o-r')
 	plt.title('Plot of the the mean-squared error vs. degree of polynomial')
-	plt.legend(['R(D)', 'R_tilde(D)'])
+	plt.legend(['R(D)', 'R_tilde(D)', 'F(D)'])
 	plt.xlabel('D values')
 	plt.ylabel('Mean-squared error')
 	plt.show()
@@ -106,4 +106,4 @@ if __name__ == "__main__":
 
 	#plot_MSE(D_vals1, MSE_vals_y1);
 	#plot_MSE2(D_vals1, MSE_vals_y1, MSE_vals_ytilde1)
-	plot_MSE2(D_vals2, MSE_vals_ytilde1, MSE_vals_y2)
+	plot_MSE3(D_vals2, MSE_vals_y1, MSE_vals_ytilde1, MSE_vals_y2)
