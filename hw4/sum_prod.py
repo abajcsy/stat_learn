@@ -86,6 +86,7 @@ class Tree():
 				edge_compat = self.edge_compat(i,j)
 				
 				# compute product of all the received messages from neighbors 
+				# that are NOT the one you are sending a message to
 				vec_prod = np.array([1,1])
 				for x in self.nodes[i].neigh:
 					if x != j:
