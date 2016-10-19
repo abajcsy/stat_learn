@@ -3,85 +3,106 @@ Implementation of problem 4.2
 """
 import numpy as np
 from numpy import *
-	
+
+class SepSet():
+	nodes = []
+	compat = []
+
+	def __init__(self, nodes):
+		self.nodes = nodes
+
+	# tells you if a given node s is in the separator set
+	def indicator(self, s):
+		if s in nodes:
+			return 1
+		else:
+			return 0
+
 # Node class that stores the compatability function at that node, 
 # the list of neighbor nodes it sends/receives messages to/from,
 # the list of incoming messages and outgoing messages
-class Node():
-	# stores vector for node's singleton compatibility function
+class Clique():
+	# list of nodes in this clique
+	nodes = []
+	# vector for clique's compatibility function
 	compat = []
-	# stores list of neighbors 
+	# list of neighboring cliques
 	neigh = []
 
-	# these are dictionaries that map a node's neighbors 
+	# these are dictionaries that map a clique's neighbors 
 	# to the message it's sending/receiving  
 	in_msgs = {}
 	out_msgs = {}
 
 	def __init__(self, compat):
 		self.compat = compat
-
-	# debugging functions
-	def __repr__(self):
-		string = "{neigh: " + str(self.neigh) + ", in_msgs: " + str(self.in_msgs) + ", out_msgs: " + str(self.out_msgs) + "}\n"
-		return string
-
-	def __str__(self):
-		string = "{neigh: " + str(self.neigh) + ", in_msgs: " + str(self.in_msgs) + ", out_msgs: " + str(self.out_msgs) + "}\n"
-		return string
 		
 # Tree class represents a tree as a set of nodes. Each node
 # has a list of neighbors which represents the possible edges 
 # that exist in the tree.
-class Tree():
-	nodes = []
+class JunctionTree():
+	cliques = []
+	sep_sets = []
 	size = 0
+	sep_size = 0
 	
-	def __init__(self, max_node):
-		self.size = max_node
+	def __init__(self):
+		self.size = 6
+		self.sep_size = 4
 
-		for i in range(max_node):
-			self.nodes.append(Node(self.single_compat(i)))
+		# create list of separator sets
+		sep_sets = [SepSet([1,3]), SepSet([3,7]), SepSet([1,4,7]), SepSet([1,5]), SepSet([5,7])]
+
+		# create list of cliques in junction tree
+		for i in range(self.size):
+			self.cliques.append(Clique([]))
  
-		self.nodes[0].neigh = [1,2]
-		self.nodes[1].neigh = [0,3,4]
-		self.nodes[2].neigh = [0,5]
-		self.nodes[3].neigh = [1]
-		self.nodes[4].neigh = [1]
-		self.nodes[5].neigh = [2]
+		self.cliques[0].nodes = [0,1,3]
+		self.cliques[0].neigh = [1] # stores indices of neighboring cliques in self.cliques
+
+		self.cliques[1].nodes = [1,3,4,7]
+		self.cliques[1].neigh = [0,2,4]
+		
+		self.cliques[2].nodes = [3,6,7]
+		self.cliques[2].neigh = [1]
+
+		self.cliques[3].nodes = [1,2,5]
+		self.cliques[3].neigh = [4]
+
+		self.cliques[4].nodes = [1,4,5,7]
+		self.cliques[4].neigh = [1,3,5]
+
+		self.cliques[5].nodes = [5,7,8]
+		self.cliques[5].neigh = [4]
 
 		# initialize messages for all edges uniformly at first
 		# for incoming and outgoing edges
 		for i in range(self.size):
-			self.nodes[i].out_msgs = {}
-			self.nodes[i].in_msgs = {}
-			for j in self.nodes[i].neigh:
-				self.nodes[i].out_msgs[j] = np.array([1,1]) 
-				self.nodes[i].in_msgs[j] = np.array([1,1])
-	
-	# defines the compatibility function for a given node
-	def single_compat(self, s):
-		if s%2 == 0:
-			return np.array([0.7, 0.3])
-		else:
-			return np.array([0.1, 0.9])
+			self.cliques[i].out_msgs = {}
+			self.cliques[i].in_msgs = {}
+			for j in self.cliques[i].neigh:
+				self.cliques[i].out_msgs[j] = np.array([1,1]) 
+				self.cliques[i].in_msgs[j] = np.array([1,1])
 	
 	# defines the compatibility function for a given edge (or pair of nodes)
 	def edge_compat(self, s, t):
 		if s == t:
 			return 1.0
 		else:
-			return 0.45	
+			if s == 0 and t == 1:
+				return 0.3
+			else:
+				return 0.5	
 
 	# runs sum-product algorithm on tree
 	def sum_prod_factor(self):
 		numIter = 20
 		for k in range(numIter):
-			# for each node t
+			# for each clique t
 			for s in range(self.size):
-				# for each node s that has an edge with t
-				for t in self.nodes[s].neigh:	
-					self.nodes[t].out_msgs[s] = np.array([0,0])
+				# for each clique s that has an edge with t
+				for t in self.cliques[s].neigh:	
+					self.cliques[t].out_msgs[s] = np.array([0,0])
 					# compute for x_s = 0 and x_s = 1
 					for idx in range(2):
 						# get edge compatibility function 
@@ -90,7 +111,7 @@ class Tree():
 						edge_compat = np.array([edge_compat0, edge_compat1])
 
 						# get t's singleton compatibility function 
-						compat_t = self.nodes[t].compat
+						compat_t = self.cliques[t].compat
 					
 						# compute final product of edge and singleton compatibility function
 						final_compat = compat_t[idx]*edge_compat
@@ -98,23 +119,23 @@ class Tree():
 						# compute product of all the received messages from neighbors 
 						# that are NOT the one you are sending a message to
 						vec_prod = np.array([1,1])
-						for u in self.nodes[t].neigh:
+						for u in self.cliques[t].neigh:
 							if u != s:
-								vec_prod = vec_prod*self.nodes[u].out_msgs[t][idx]
+								vec_prod = vec_prod*self.cliques[u].out_msgs[t][idx]
 										
 						result = final_compat * vec_prod					
-						self.nodes[t].out_msgs[s] =  self.nodes[t].out_msgs[s] + result		
-					self.nodes[s].in_msgs[t] = self.nodes[t].out_msgs[s]
+						self.cliques[t].out_msgs[s] =  self.cliques[t].out_msgs[s] + result		
+					self.cliques[s].in_msgs[t] = self.cliques[t].out_msgs[s]
 					
 		# compute marginals from formula:
 		# p(x_s) = psi(x_s)* prod_over_neighbors(M*_(t->s)(x_s))
 		for i in range(self.size):
-			marg = np.prod(self.nodes[i].in_msgs.values(),0)
-			marg = self.nodes[i].compat*marg
+			marg = np.prod(self.cliques[i].in_msgs.values(),0)
+			marg = self.cliques[i].compat*marg
 			marg_norm = marg/np.sum(marg)
 			print "p(",i, ") = ", marg_norm
 			
 if __name__ == '__main__':
-	t = Tree(6)	
+	t = JunctionTree()	
 	t.sum_prod_factor()
 
