@@ -152,16 +152,18 @@ def problem2i():
 					psi[1][0][1][0][1] = psi_12_01_new
 					psi[0][0][1][1][1] = psi_12_01_new
 					psi[1][0][1][1][1] = psi_12_01_new
+				
+					# compute new psi_12[1][0]
+					psi_12_10_new = psi[0][1][0][0][1] * mu_hat[1][1][0]/mu_old[1][1][0]
+					# deal with psi_12(x_1 = 1)(x_2 = 0)
+					psi[0][1][0][0][1] = psi_12_10_new
+					psi[1][1][0][0][1] = psi_12_10_new
+					psi[0][1][0][1][1] = psi_12_10_new
+					psi[1][1][0][1][1] = psi_12_10_new
+					
 					
 					#-------------------------TODO FROM HERE------------------------------
 					
-					# compute new psi_01[1][0]
-					psi_01_10_new = psi[1][0][0][0][1] * mu_hat[1][1][0]/mu_old[1][1][0]
-					# deal with psi_01(x_0 = 1)(x_1 = 0)
-					psi[1][0][0][0][0] = psi_01_10_new
-					psi[1][0][1][0][0] = psi_01_10_new
-					psi[1][0][0][1][0] = psi_01_10_new
-					psi[1][0][1][1][0] = psi_01_10_new
 					
 					# compute new psi_01[1][1]
 					psi_01_11_new = psi[1][1][0][0][0] * mu_hat[1][1][1]/mu_old[1][1][1]
