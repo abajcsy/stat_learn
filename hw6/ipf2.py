@@ -41,23 +41,30 @@ def get_likelihood_2i(S, cliques):
 	prod = np.array((2,2))
 	num_cliques = len(cliques)
 	
-	# take product over all psi(s,t)
-
-	# multiply clique (0,1)*(1,2)
-	a = S[:,:,:,0,0]
-	b = S[:,:,:,0,1]
-	c = a*b
-	# clique (2,3)
-	d = S[0,:,:,:,2]
-	print "a"
-	print a
-	print "mult a*b"
-	print a*b
-	print "b"
-	print b
-	print "adghfadf"
-	print np.prod(a,b,2)
-	#prod0 = S[:,:,:,0,0]*S[:,:,:,0,1]
+	sum = 0
+	for i in range(2):
+		for j in range(2):
+			for k in range(2):
+				for m in range(2):
+					sum += np.prod(S[i,j,k,m])
+	print sum
+	
+	prob0 = np.zeros((2,1))
+	prob1 = np.zeros((2,1))
+	prob2 = np.zeros((2,1))
+	prob3 = np.zeros((2,1))
+	
+	for i in range(2):
+		prob0[i] = np.sum(np.prod(S[i,:,:,:],3))/sum
+		prob1[i] = np.sum(np.prod(S[:,i,:,:],3))/sum
+		prob2[i] = np.sum(np.prod(S[:,:,i,:],3))/sum
+		prob3[i] = np.sum(np.prod(S[:,:,:,i],3))/sum
+	
+	print "p(x0) = \n", prob0
+	print "p(x1) = \n", prob1
+	print "p(x2) = \n", prob2
+	print "p(x3) = \n", prob3
+	#sum00 = np.sum(np.prod(S[:,:,:,:],2))
 	
 def problem2i():
 	cliques = [(0,1), (1,2), (2,3), (0,3)]
