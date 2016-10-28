@@ -84,6 +84,10 @@ def problem2i():
 					mu_old_01[1][0] = np.prod(psi[1][0][0][0], 0)  + np.prod(psi[1][0][1][0], 0) + np.prod(psi[1][0][0][1], 0) + np.prod(psi[1][0][1][1], 0)   
 					mu_old_01[1][1] = np.prod(psi[1][1][0][0], 0)  + np.prod(psi[1][1][1][0], 0) + np.prod(psi[1][1][0][1], 0) + np.prod(psi[1][1][1][1], 0)   
 					
+					# normalize 
+					norm_const = mu_old_01[0][0] + mu_old_01[0][1] + mu_old_01[1][0] + mu_old_01[1][1]
+					mu_old_01 = mu_old_01/norm_const
+					
 					mu_old[0] = mu_old_01
 					
 				else if(t == 3):
@@ -127,15 +131,61 @@ def problem2i():
 					mu_old_03[1][0] = np.prod(psi[1][0][0][0], 0)  + np.prod(psi[1][0][1][0], 0) + np.prod(psi[1][1][0][0], 0) + np.prod(psi[1][1][1][0], 0)   
 					mu_old_03[1][1] = np.prod(psi[1][0][0][1], 0)  + np.prod(psi[1][1][0][1], 0) + np.prod(psi[1][0][1][1], 0) + np.prod(psi[1][1][1][1], 0)   
 					
+					# normalize 
+					norm_const = mu_old_03[0][0] + mu_old_03[0][1] + mu_old_03[1][0] + mu_old_03[1][1]
+					mu_old_03 = mu_old_03/norm_const
+					
 					mu_old[3] = mu_old_03					
 			else if(s == 1 and t == 2):
-			
+					# compute new psi_12[0][0]
+					psi_12_00_new = psi[0][0][0][0][1] * mu_hat[1][0][0]/mu_old[1][0][0]
+					# deal with psi_12(x_1 = 0)(x_2 = 0)
+					psi[0][0][0][0][1] = psi_12_00_new
+					psi[1][0][0][0][1] = psi_12_00_new
+					psi[0][0][0][1][1] = psi_12_00_new
+					psi[1][0][0][1][1] = psi_12_00_new
+					
+					# compute new psi_12[0][1]
+					psi_12_01_new = psi[0][0][1][0][1] * mu_hat[1][0][1]/mu_old[1][0][1]
+					# deal with psi_12(x_1 = 0)(x_2 = 1)
+					psi[0][0][1][0][1] = psi_12_01_new 
+					psi[1][0][1][0][1] = psi_12_01_new
+					psi[0][0][1][1][1] = psi_12_01_new
+					psi[1][0][1][1][1] = psi_12_01_new
+					
+					#-------------------------TODO FROM HERE------------------------------
+					
+					# compute new psi_01[1][0]
+					psi_01_10_new = psi[1][0][0][0][1] * mu_hat[1][1][0]/mu_old[1][1][0]
+					# deal with psi_01(x_0 = 1)(x_1 = 0)
+					psi[1][0][0][0][0] = psi_01_10_new
+					psi[1][0][1][0][0] = psi_01_10_new
+					psi[1][0][0][1][0] = psi_01_10_new
+					psi[1][0][1][1][0] = psi_01_10_new
+					
+					# compute new psi_01[1][1]
+					psi_01_11_new = psi[1][1][0][0][0] * mu_hat[1][1][1]/mu_old[1][1][1]
+					# deal with psi_01(x_0 = 1)(x_1 = 1)
+					psi[1][1][0][0][0] = psi_01_11_new
+					psi[1][1][1][0][0] = psi_01_11_new
+					psi[1][1][0][1][0] = psi_01_11_new
+					psi[1][1][1][1][0] = psi_01_11_new
+					
+					# update mu_old
+					mu_old_01 = np.array((2,2))
+					# take product along all psi's
+					mu_old_01[0][0] = np.prod(psi[0][0][0][0], 0)  + np.prod(psi[0][0][1][0], 0) + np.prod(psi[0][0][0][1], 0) + np.prod(psi[0][0][1][1], 0)   
+					mu_old_01[0][1] = np.prod(psi[0][1][0][0], 0)  + np.prod(psi[0][1][1][0], 0) + np.prod(psi[0][1][0][1], 0) + np.prod(psi[0][1][1][1], 0)  
+					mu_old_01[1][0] = np.prod(psi[1][0][0][0], 0)  + np.prod(psi[1][0][1][0], 0) + np.prod(psi[1][0][0][1], 0) + np.prod(psi[1][0][1][1], 0)   
+					mu_old_01[1][1] = np.prod(psi[1][1][0][0], 0)  + np.prod(psi[1][1][1][0], 0) + np.prod(psi[1][1][0][1], 0) + np.prod(psi[1][1][1][1], 0)   
+					
+					# normalize 
+					norm_const = mu_old_01[0][0] + mu_old_01[0][1] + mu_old_01[1][0] + mu_old_01[1][1]
+					mu_old_01 = mu_old_01/norm_const
+					
+					mu_old[1] = mu_old_01
 			else if(s == 2 and t == 3):
 				
-			#else if(s == 3):
-				#if(t == 0):
-				#else if(t == 1):
-				#else if(t == 2):
 				
 			psi[i] = psi[i]*mu_hat[i]/mu_old[i]
 	
