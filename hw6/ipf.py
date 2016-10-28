@@ -2,42 +2,45 @@ import numpy as np
 from numpy import *
 import matplotlib.pyplot as plt
 
-def init_matrices(num_c):
-	list = [None] * num_c
-	length = len(list)
-	for i in range(length):
-		list[i] = np.ones((2,2))
+def init_matrices(clique_nodes):
+	list = [None] * len(clique_nodes)
+	i = 0
+	for n in clique_nodes:
+		c_size = len(n)
+		list[i] = np.ones((c_size,c_size))
+		i = i+1
 	return list
 
-def compute_mu_hat(psi, mu, data, clique_nodes):
+def compute_mu_hat(mu, data, clique_nodes):
 	mu_hat = mu
-	(s,t) = clique_nodes
-	for i in range(2):
-		for j in range(2):
+	for j in range(2):
+		for k in range(2):
 			# compute sum
 			sum = 0
-			for k in range(30):
-				sum += psi[i][j]*(data[s][k] == j)*(data[t][k] == i)
-			mu_hat[i][j] = 1/30.0 * sum
+			for i in range(30):
+				(s,t) = clique_nodes
+				sum += (data[s][i] == j)*(data[t][i] == k)
+			mu_hat[j][k] = 1/30.0 * sum
 	return mu_hat
+	
+def compute_mu_old(psi, cliques, curr_clique):
+	
 	
 if __name__ == "__main__":
 	data = np.loadtxt('Pairwise.dat')
-	print data
 
 	cliques = [(0,1), (1,2), (2,3), (0,3)]
 	num_c = len(cliques)
-	print num_c
 	
-	psi = init_matrices(num_c)
+	psi = init_matrices(cliques)
+	mu_hat = init_matrices(cliques)
+	mu_old = init_matrices(cliques)
 	
-	mu_hat =  init_matrices(num_c)
-	mu_old = []
-	
+	# compute mu_hat for each clique
 	for i in range(num_c):
-		mu_old = mu_hat
-		mu_hat = compute_mu_hat(psi[i], mu_old[i], data, cliques[i])
-		psi[i] = psi[i]*mu_hat[i]/mu_old[i]
+		mu_hat[i] = compute_mu_hat(mu_hat[i], data, cliques[i])
 	
-	print psi
-	print mu_hat
+	for n in range(10):
+		for i in range(num_c):
+			psi[i] = psi[i]*mu_hat[i]/mu_old[i]
+	
