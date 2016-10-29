@@ -2,7 +2,6 @@ import numpy as np
 from numpy import *
 import matplotlib.pyplot as plt
 
-
 #----------------------------------------------------------#
 #----------------- UTILITY FUNC  ------------------------#
 #----------------------------------------------------------#	
@@ -32,15 +31,9 @@ def init_mu(clique_nodes):
 		i = i+1
 	return list
 	
-#----------------------------------------------------------#
-#----------------- PROBLEM 2(i)  ------------------------#
-#----------------------------------------------------------#	
-
-# compute P(x1...xd)  = (1/Z) * prod(psi_st(x_s, x_t))	
-def get_likelihood_2i(S, cliques):
-	prod = np.array((2,2))
-	num_cliques = len(cliques)
 	
+# compute P(x1...xd)  = (1/Z) * prod(psi_st(x_s, x_t))	
+def get_likelihood(S):
 	sum = 0
 	for i in range(2):
 		for j in range(2):
@@ -64,8 +57,11 @@ def get_likelihood_2i(S, cliques):
 	print "p(x1) = \n", prob1
 	print "p(x2) = \n", prob2
 	print "p(x3) = \n", prob3
-	#sum00 = np.sum(np.prod(S[:,:,:,:],2))
 	
+#----------------------------------------------------------#
+#----------------- PROBLEM 2(i)  ------------------------#
+#----------------------------------------------------------#	
+
 def problem2i():
 	cliques = [(0,1), (1,2), (2,3), (0,3)]
 	num_c = len(cliques)
@@ -133,7 +129,7 @@ def problem2i():
 	print "psi_23 = \n", S[0,0,:,:,2], "\n"
 	print "psi_03 = \n", S[:,0,0,:,3], "\n"
 
-	get_likelihood_2i(S, cliques)
+	get_likelihood(S)
 	
 #----------------------------------------------------------#
 #----------------- PROBLEM 2(ii)  ------------------------#
@@ -205,6 +201,8 @@ def problem2ii():
 	print "psi_02 = \n", S[:,0,:,0,1], "\n"
 	print "psi_03 = \n", S[:,0,0,:,2], "\n"
 	print "psi_12 = \n", S[0,:,:,0,3], "\n"
+	
+	get_likelihood(S)
 	
 #----------------------------------------------------------#
 #----------------- PROBLEM 2(iii)  ------------------------#
@@ -302,9 +300,11 @@ def problem2iii():
 	print "psi_12 = \n", S[0,:,:,0,3], "\n"
 	print "psi_13 = \n", S[0,:,0,:,4], "\n"
 	print "psi_23 = \n", S[0,0,:,:,5], "\n"
+	
+	get_likelihood(S)
 
 if __name__ == "__main__":
 	data = np.loadtxt('Pairwise.dat')
 	problem2i()
-	#problem2ii()
-	#problem2iii()
+	problem2ii()
+	problem2iii()
