@@ -9,27 +9,28 @@ def f(x,c):
 	else:
 		return 0
 
-# distribution of Y with denisty g
-def g(x):
-	return np.random.uniform(0,1) 
-	
 if __name__ == "__main__":
-	N = 1000
-	M = 2 # M > 1 and bound on f(x)/g(x)
-	c = 6
+	N = 10000
+	c = 2
 	x = [None] * N
 	i = 0
+	samp_count = 0.0
 	while i != N:
-		y  = g(x)
+		y  = np.random.uniform(0,1) 
 		# sample u from Unif(0,1)
-		u = np.random.uniform(0,1) 
-		if u < (f(y, c) / M*g(y)) : 
+		u = np.random.uniform(0,1)*c/4 
+		if u < f(y, c) : 
 			#accept y as sample drawn from f
 			x[i] = y
 			i = i + 1
 			print "accept: ", y
 		# else: reject y and return to sampling
+		samp_count += 1
 	
-	plt.hist(x,N)
+	
+	print samp_count 
+	print "E[T]: ", samp_count/N
+
+	plt.hist(x)
 	plt.title("Accept-Reject Sampling Histogram")
 	plt.show()

@@ -33,14 +33,13 @@ def init_mu(clique_nodes):
 	
 	
 # compute P(x1...xd)  = (1/Z) * prod(psi_st(x_s, x_t))	
-def get_likelihood(S):
-	sum = 0
+def get_likelihood(S, data):
+	normalizer = 0
 	for i in range(2):
 		for j in range(2):
 			for k in range(2):
 				for m in range(2):
-					sum += np.prod(S[i,j,k,m])
-	print sum
+					normalizer += np.prod(S[i,j,k,m])
 	
 	prob0 = np.zeros((2,1))
 	prob1 = np.zeros((2,1))
@@ -48,15 +47,21 @@ def get_likelihood(S):
 	prob3 = np.zeros((2,1))
 	
 	for i in range(2):
-		prob0[i] = np.sum(np.prod(S[i,:,:,:],3))/sum
-		prob1[i] = np.sum(np.prod(S[:,i,:,:],3))/sum
-		prob2[i] = np.sum(np.prod(S[:,:,i,:],3))/sum
-		prob3[i] = np.sum(np.prod(S[:,:,:,i],3))/sum
+		prob0[i] = np.sum(np.prod(S[i,:,:,:],3))/normalizer
+		prob1[i] = np.sum(np.prod(S[:,i,:,:],3))/normalizer
+		prob2[i] = np.sum(np.prod(S[:,:,i,:],3))/normalizer
+		prob3[i] = np.sum(np.prod(S[:,:,:,i],3))/normalizer
 	
 	print "p(x0) = \n", prob0
 	print "p(x1) = \n", prob1
 	print "p(x2) = \n", prob2
 	print "p(x3) = \n", prob3
+
+	total = 1.0
+	for i in range(30):
+		total *= np.prod(S[data[0][i], data[1][i], data[2][i], data[3][i],:])/normalizer
+
+	print "likelihood: ", total
 	
 #----------------------------------------------------------#
 #----------------- PROBLEM 2(i)  ------------------------#
@@ -129,7 +134,7 @@ def problem2i():
 	print "psi_23 = \n", S[0,0,:,:,2], "\n"
 	print "psi_03 = \n", S[:,0,0,:,3], "\n"
 
-	get_likelihood(S)
+	get_likelihood(S, data)
 	
 #----------------------------------------------------------#
 #----------------- PROBLEM 2(ii)  ------------------------#
@@ -202,7 +207,7 @@ def problem2ii():
 	print "psi_03 = \n", S[:,0,0,:,2], "\n"
 	print "psi_12 = \n", S[0,:,:,0,3], "\n"
 	
-	get_likelihood(S)
+	get_likelihood(S, data)
 	
 #----------------------------------------------------------#
 #----------------- PROBLEM 2(iii)  ------------------------#
@@ -301,7 +306,7 @@ def problem2iii():
 	print "psi_13 = \n", S[0,:,0,:,4], "\n"
 	print "psi_23 = \n", S[0,0,:,:,5], "\n"
 	
-	get_likelihood(S)
+	get_likelihood(S, data)
 
 if __name__ == "__main__":
 	data = np.loadtxt('Pairwise.dat')
